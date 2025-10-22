@@ -1263,11 +1263,11 @@ def update_tab_content(active_tab, property_data, loan_type, tax_province, tax_s
     elif active_tab == "surveillance":
         return create_surveillance_tab(property_data)
     elif active_tab == "summary":
-        return create_summary_tab(property_data, loan_type, tax_province, tax_status, schl_payment_mode, conventional_rate)
+        return create_summary_tab(property_data, loan_type, tax_province, tax_status, schl_payment_mode, conventional_rate, None, None)
     elif active_tab == "costs":
         return create_costs_tab(property_data, loan_type)
     elif active_tab == "profit":
-        return create_profit_tab(property_data, loan_type, tax_province, tax_status, schl_payment_mode, conventional_rate)
+        return create_profit_tab(property_data, loan_type, tax_province, tax_status, schl_payment_mode, conventional_rate, None, None)
     elif active_tab == "geo_analysis":
         return get_geo_analysis_component(property_data)
     else:
@@ -2986,11 +2986,11 @@ def update_tab_content(active_tab, property_data, loan_type, tax_province, tax_s
     elif active_tab == "surveillance":
         return create_surveillance_tab(property_data)
     elif active_tab == "summary":
-        return create_summary_tab(property_data, loan_type, tax_province, tax_status, schl_payment_mode, conventional_rate)
+        return create_summary_tab(property_data, loan_type, tax_province, tax_status, schl_payment_mode, conventional_rate, schl_cache, manual_schl_rate)
     elif active_tab == "costs":
         return create_costs_tab(property_data, loan_type)
     elif active_tab == "profit":
-        return create_profit_tab(property_data, loan_type, tax_province, tax_status, schl_payment_mode, conventional_rate)
+        return create_profit_tab(property_data, loan_type, tax_province, tax_status, schl_payment_mode, conventional_rate, schl_cache, manual_schl_rate)
     elif active_tab == "geo_analysis":
         return get_geo_analysis_component(property_data)
     else:
@@ -3999,7 +3999,7 @@ def create_surveillance_tab(property_data):
         ])
     ])
 
-def create_summary_tab(property_data, loan_type=None, tax_province=None, tax_status=None, schl_payment_mode=None, conventional_rate=None):
+def create_summary_tab(property_data, loan_type=None, tax_province=None, tax_status=None, schl_payment_mode=None, conventional_rate=None, schl_cache=None, manual_schl_rate=None):
     # Debug
     print(f"🔍 [CREATE_SUMMARY_TAB] Loan type: {loan_type}")
     if property_data:
@@ -4661,7 +4661,7 @@ def create_costs_tab(property_data, loan_type):
         ], className="card-custom")
     ])
 
-def create_profit_tab(property_data, loan_type, tax_province, tax_status, schl_payment_mode=None, conventional_rate=None):
+def create_profit_tab(property_data, loan_type, tax_province, tax_status, schl_payment_mode=None, conventional_rate=None, schl_cache=None, manual_schl_rate=None):
     """Crée l'onglet Profit avec tableau d'amortissement et graphique"""
     
     # Récupérer les données financières
