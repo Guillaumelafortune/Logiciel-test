@@ -7,6 +7,42 @@ import pandas as pd
 from sqlalchemy import create_engine
 from datetime import date
 import re
+import os
+
+
+def get_db_connection_string(database_name):
+    """
+    Retourne la chaîne de connexion à la base de données selon l'environnement.
+    
+    En production (Railway): Utilise DATABASE_URL_<nom>
+    En développement (local): Utilise Tailscale (100.73.238.42)
+    
+    Args:
+        database_name: Nom de la base ('simulation', 'economic', 'analysis')
+    
+    Returns:
+        str: Chaîne de connexion PostgreSQL
+    """
+    # Vérifier si on est en production (Railway définit RAILWAY_ENVIRONMENT)
+    is_production = os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('FLASK_ENV') == 'production'
+    
+    if is_production:
+        # En production, chercher une variable d'environnement spécifique
+        env_var_name = f"DATABASE_URL_{database_name.upper()}"
+        db_url = os.environ.get(env_var_name)
+        
+        # Fallback: si une seule DATABASE_URL est définie, l'utiliser pour toutes
+        if not db_url:
+            db_url = os.environ.get('DATABASE_URL')
+        
+        if db_url:
+            # Correction pour certains providers (postgres:// -> postgresql://)
+            if db_url.startswith('postgres://'):
+                db_url = db_url.replace('postgres://', 'postgresql://', 1)
+            return db_url
+    
+    # Configuration locale par défaut (Tailscale)
+    return f"postgresql://postgres:4845@100.73.238.42:5432/{database_name}"
 
 
 def clean_percentage_value(value):
@@ -46,7 +82,7 @@ def clean_percentage_value(value):
 def load_tax_rates_particulier():
     """Charge les taux d'imposition pour les particuliers"""
     engine = create_engine(
-        "postgresql://postgres:4845@100.73.238.42:5432/economic",
+        get_db_connection_string('economic'),
         connect_args={"client_encoding": "utf8"}
     )
     query = 'SELECT * FROM "particulier".impot_federal_particulier ORDER BY id'
@@ -73,7 +109,7 @@ def load_tax_rates_particulier():
 def load_tax_rates_entreprise():
     """Charge les taux d'imposition pour les entreprises"""
     engine = create_engine(
-        "postgresql://postgres:4845@100.73.238.42:5432/economic",
+        get_db_connection_string('economic'),
         connect_args={"client_encoding": "utf8"}
     )
     query = 'SELECT * FROM entreprise.impot_federal_placement ORDER BY id'
@@ -84,7 +120,7 @@ def load_immeubles():
     """Charge les immeubles actifs (données les plus récentes)"""
     try:
         engine = create_engine(
-            "postgresql://postgres:4845@100.73.238.42:5432/simulation",
+            get_db_connection_string('simulation'),
             connect_args={"client_encoding": "utf8"}
         )
         # Prendre les données les plus récentes
@@ -104,7 +140,7 @@ def load_immeubles_history(selected_date: date):
     """Charge les immeubles historiques pour une date donnée"""
     try:
         engine = create_engine(
-            "postgresql://postgres:4845@100.73.238.42:5432/simulation",
+            get_db_connection_string('simulation'),
             connect_args={"client_encoding": "utf8"}
         )
         date_str = selected_date.strftime('%Y-%m-%d')
@@ -165,7 +201,7 @@ def load_schl_rates():
 def load_app_parameters():
     """Charge les paramètres de configuration de l'application depuis la base de données"""
     engine = create_engine(
-        "postgresql://postgres:4845@100.73.238.42:5432/simulation",
+        get_db_connection_string('simulation'),
         connect_args={"client_encoding": "utf8"}
     )
     query = 'SELECT * FROM configuration.app_parameters'
@@ -182,7 +218,7 @@ def load_app_parameters():
 def load_acquisition_costs():
     """Charge les coûts d'acquisition depuis la base de données"""
     engine = create_engine(
-        "postgresql://postgres:4845@100.73.238.42:5432/simulation",
+        get_db_connection_string('simulation'),
         connect_args={"client_encoding": "utf8"}
     )
     query = 'SELECT * FROM configuration.acquisition_costs'
@@ -202,7 +238,7 @@ def load_acquisition_costs():
 def load_adjustment_defaults():
     """Charge les valeurs d'ajustement par défaut pour les simulations"""
     engine = create_engine(
-        "postgresql://postgres:4845@100.73.238.42:5432/simulation",
+        get_db_connection_string('simulation'),
         connect_args={"client_encoding": "utf8"}
     )
     query = 'SELECT * FROM configuration.simulation_adjustments'
@@ -219,7 +255,7 @@ def load_adjustment_defaults():
 def load_provinces():
     """Charge les provinces du Canada"""
     engine = create_engine(
-        "postgresql://postgres:4845@100.73.238.42:5432/analysis",
+        get_db_connection_string('analysis'),
         connect_args={"client_encoding": "utf8"}
     )
     query = 'SELECT province_id, province_name FROM id."Canada_Provinces_ID"'
@@ -229,7 +265,7 @@ def load_provinces():
 def load_regions(province_id=None):
     """Charge les régions du Québec"""
     engine = create_engine(
-        "postgresql://postgres:4845@100.73.238.42:5432/analysis",
+        get_db_connection_string('analysis'),
         connect_args={"client_encoding": "utf8"}
     )
     query = 'SELECT region_id, region_nom, province_id FROM id."Province_Quebec_Regions_ID"'
@@ -241,7 +277,7 @@ def load_regions(province_id=None):
 def load_secteurs(region_id=None):
     """Charge les secteurs d'une région"""
     engine = create_engine(
-        "postgresql://postgres:4845@100.73.238.42:5432/analysis",
+        get_db_connection_string('analysis'),
         connect_args={"client_encoding": "utf8"}
     )
     query = 'SELECT secteur_id, secteur_nom, region_id, region_nom FROM id."Province_Quebec_Regions_Secteurs_ID"'
@@ -253,7 +289,7 @@ def load_secteurs(region_id=None):
 def load_quartiers(region_id=None):
     """Charge les quartiers d'une région"""
     engine = create_engine(
-        "postgresql://postgres:4845@100.73.238.42:5432/analysis",
+        get_db_connection_string('analysis'),
         connect_args={"client_encoding": "utf8"}
     )
     query = 'SELECT quartier_id, quartier_nom_fr, region_id, region_nom FROM id."Province_Quebec_Quartiers_ID"'
@@ -265,7 +301,7 @@ def load_quartiers(region_id=None):
 def load_secteurs_recensement(region_id=None):
     """Charge les secteurs de recensement d'une région"""
     engine = create_engine(
-        "postgresql://postgres:4845@100.73.238.42:5432/analysis",
+        get_db_connection_string('analysis'),
         connect_args={"client_encoding": "utf8"}
     )
     query = 'SELECT secteur_rec_id, secteur_rec_code, region_id, region_nom FROM id."Province_Quebec_Secteurs_recensement_ID"'
@@ -277,7 +313,7 @@ def load_secteurs_recensement(region_id=None):
 def load_taxe_bienvenue():
     """Charge les taux de taxe de bienvenue (mutation) depuis la base de données"""
     engine = create_engine(
-        "postgresql://postgres:4845@100.73.238.42:5432/economic",
+        get_db_connection_string('economic'),
         connect_args={"client_encoding": "utf8"}
     )
     query = 'SELECT * FROM "all".taxe_bienvenue ORDER BY id'
@@ -288,7 +324,7 @@ def load_taxation_municipale():
     """Charge les taux de taxation municipale depuis la base de données"""
     try:
         engine = create_engine(
-            "postgresql://postgres:4845@100.73.238.42:5432/economic",
+            get_db_connection_string('economic'),
             connect_args={"client_encoding": "utf8"}
         )
         query = 'SELECT * FROM "all".taxation_municipale'
@@ -304,7 +340,7 @@ def load_taux_hypothecaires():
     """Charge les taux hypothécaires des banques depuis la base de données"""
     try:
         engine = create_engine(
-            "postgresql://postgres:4845@100.73.238.42:5432/economic",
+            get_db_connection_string('economic'),
             connect_args={"client_encoding": "utf8"}
         )
         query = '''
