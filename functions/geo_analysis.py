@@ -20,14 +20,6 @@ from shapely import wkb, wkt
 from typing import Optional, Dict, Any, Tuple, List
 import datetime
 
-# Configuration de la base de données PostgreSQL
-DB_CONFIG = {
-    "dbname": "analysis",
-    "user": "postgres",
-    "password": "4845",
-    "host": "100.73.238.42"
-}
-
 # Schémas de la base de données (alignés avec recherche.py)
 SCHEMA_MAPPING = "id"  # Tables de référence et géographiques
 
@@ -35,10 +27,30 @@ SCHEMA_MAPPING = "id"  # Tables de référence et géographiques
 # GESTION DE LA BASE DE DONNÉES
 # ============================================================================
 
+def get_db_config():
+    """Obtient la configuration de connexion dynamique selon l'environnement"""
+    from filter.data_loading import get_db_connection_string
+    import urllib.parse
+    
+    # Obtenir l'URL de connexion
+    db_url = get_db_connection_string('analysis')
+    
+    # Parser l'URL postgresql://user:password@host:port/database
+    parsed = urllib.parse.urlparse(db_url)
+    
+    return {
+        "dbname": parsed.path[1:],  # Enlever le / au début
+        "user": parsed.username,
+        "password": parsed.password,
+        "host": parsed.hostname,
+        "port": parsed.port or 5432
+    }
+
 @contextmanager
 def get_connection_context():
     """Gestionnaire de contexte pour la connexion à la base de données PostgreSQL"""
-    conn = psycopg2.connect(**DB_CONFIG)
+    db_config = get_db_config()
+    conn = psycopg2.connect(**db_config)
     try:
         yield conn
     finally:
