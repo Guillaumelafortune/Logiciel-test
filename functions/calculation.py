@@ -763,8 +763,9 @@ def get_property_region(property_data):
         point = Point(lon, lat)
         
         # Charger toutes les régions du Québec
+        from filter.data_loading import get_db_connection_string
         engine = create_engine(
-            "postgresql://postgres:4845@100.73.238.42:5432/analysis",
+            get_db_connection_string('analysis'),
             connect_args={"client_encoding": "utf8"}
         )
         
@@ -1330,8 +1331,9 @@ def calculate_bienvenue_tax_with_details(prix, property_data=None):
                     point = Point(lon, lat)
                     
                     # Récupérer toutes les régions du Québec
+                    from filter.data_loading import get_db_connection_string
                     engine = create_engine(
-                        "postgresql://postgres:4845@100.73.238.42:5432/analysis",
+                        get_db_connection_string('analysis'),
                         connect_args={"client_encoding": "utf8"}
                     )
                     query = '''

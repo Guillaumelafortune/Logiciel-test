@@ -306,7 +306,7 @@ def load_gain_capital_rates():
     """Charge les taux de gain en capital depuis la base de données"""
     try:
         engine = create_engine(
-            "postgresql://postgres:4845@100.73.238.42:5432/economic",
+            get_db_connection_string('economic'),
             connect_args={"client_encoding": "utf8"}
         )
         # Prendre uniquement les données les plus récentes pour chaque province
@@ -540,7 +540,7 @@ def display_selected_rate(selected_value):
 def update_immeuble_in_db(address, updated_data):
     """Met à jour les données d'un immeuble dans la base de données"""
     engine = create_engine(
-        "postgresql://postgres:4845@100.73.238.42:5432/simulation",
+        get_db_connection_string('simulation'),
         connect_args={"client_encoding": "utf8"}
     )
     
@@ -2138,7 +2138,7 @@ def display_selected_rate(selected_value):
 def update_immeuble_in_db(address, updated_data):
     """Met à jour les données d'un immeuble dans la base de données"""
     engine = create_engine(
-        "postgresql://postgres:4845@100.73.238.42:5432/simulation",
+        get_db_connection_string('simulation'),
         connect_args={"client_encoding": "utf8"}
     )
     
@@ -9731,7 +9731,7 @@ def get_property_province(property_data):
         
         # Charger toutes les provinces
         engine = create_engine(
-            "postgresql://postgres:4845@100.73.238.42:5432/analysis",
+            get_db_connection_string('analysis'),
             connect_args={"client_encoding": "utf8"}
         )
         

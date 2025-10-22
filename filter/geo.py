@@ -333,8 +333,9 @@ def filter_immeubles_by_geometry(df_immeubles, geometry):
 def get_zone_geometry(zone_type, zone_id):
     """Récupère la géométrie d'une zone spécifique"""
     
+    from filter.data_loading import get_db_connection_string
     engine = create_engine(
-        "postgresql://postgres:4845@100.73.238.42:5432/analysis",
+        get_db_connection_string('analysis'),
         connect_args={"client_encoding": "utf8"}
     )
     
