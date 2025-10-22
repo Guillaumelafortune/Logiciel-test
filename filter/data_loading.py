@@ -138,6 +138,25 @@ def load_immeubles():
         return pd.DataFrame()  # Retourne un DataFrame vide en cas d'erreur
 
 
+def load_immeubles_now():
+    """Charge les immeubles actuellement disponibles depuis immeuble_now_pmml"""
+    try:
+        engine = create_engine(
+            get_db_connection_string('simulation'),
+            connect_args={"client_encoding": "utf8"}
+        )
+        query = """
+        SELECT * FROM immeuble.immeuble_now_pmml 
+        WHERE date_scrape = (SELECT MAX(date_scrape) FROM immeuble.immeuble_now_pmml)
+        """
+        df = pd.read_sql(query, engine)
+        engine.dispose()
+        return df
+    except Exception as e:
+        print(f"Erreur lors du chargement des immeubles now: {e}")
+        return pd.DataFrame()  # Retourne un DataFrame vide en cas d'erreur
+
+
 def load_immeubles_history(selected_date: date):
     """Charge les immeubles historiques pour une date donnée"""
     try:

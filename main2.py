@@ -48,7 +48,7 @@ from functions.geo_analysis import get_geo_analysis_component
 
 from filter.data_loading import (
     load_tax_rates_particulier, load_tax_rates_entreprise, load_immeubles,
-    load_immeubles_history, load_schl_rates, load_app_parameters,
+    load_immeubles_now, load_immeubles_history, load_schl_rates, load_app_parameters,
     load_acquisition_costs, load_adjustment_defaults, load_provinces,
     load_regions, load_secteurs, load_quartiers, load_secteurs_recensement,
     load_taxe_bienvenue, load_taxation_municipale, load_taux_hypothecaires,
@@ -666,9 +666,11 @@ def update_property_list(data_source, hist_date, filtered_properties,
     elif data_source == "historical":
         df = load_immeubles_history(pd.to_datetime(hist_date).date())
     else:  # unavailable
-        df_hist = load_immeubles_history(pd.to_datetime(hist_date).date())
-        df_live = load_immeubles()
-        df = df_hist[~df_hist['address'].isin(df_live['address'].unique())]
+        # Non disponible = dans immeuble_pmml mais PAS dans immeuble_now_pmml
+        df_all = load_immeubles()  # Tous les immeubles de immeuble_pmml
+        df_now = load_immeubles_now()  # Immeubles disponibles dans immeuble_now_pmml
+        df = df_all[~df_all['address'].isin(df_now['address'].unique())]
+        print(f"📊 Immeubles non disponibles: {len(df)} (dans immeuble_pmml mais pas dans immeuble_now_pmml)")
     
     print(f"Total des immeubles disponibles: {len(df)}")
     
@@ -2615,9 +2617,11 @@ def update_property_list(data_source, hist_date, filtered_properties,
     elif data_source == "historical":
         df = load_immeubles_history(pd.to_datetime(hist_date).date())
     else:  # unavailable
-        df_hist = load_immeubles_history(pd.to_datetime(hist_date).date())
-        df_live = load_immeubles()
-        df = df_hist[~df_hist['address'].isin(df_live['address'].unique())]
+        # Non disponible = dans immeuble_pmml mais PAS dans immeuble_now_pmml
+        df_all = load_immeubles()  # Tous les immeubles de immeuble_pmml
+        df_now = load_immeubles_now()  # Immeubles disponibles dans immeuble_now_pmml
+        df = df_all[~df_all['address'].isin(df_now['address'].unique())]
+        print(f"📊 Immeubles non disponibles: {len(df)} (dans immeuble_pmml mais pas dans immeuble_now_pmml)")
     
     print(f"Total des immeubles disponibles: {len(df)}")
     
