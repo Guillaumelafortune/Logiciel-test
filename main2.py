@@ -5452,8 +5452,8 @@ def create_revenue_breakdown_chart(property_data):
         print("Erreur lors de la conversion des valeurs financières dans create_revenue_breakdown_chart")
     
     fig = go.Figure(data=[go.Pie(
-        labels=['Revenue net', 'Dépenses'],
-        values=[revenue_net, depenses],
+        labels=['Revenue brut', 'Dépenses'],
+        values=[revenue_brut, depenses],
         hole=.3,
         marker_colors=['#667eea', '#764ba2']
     )])
