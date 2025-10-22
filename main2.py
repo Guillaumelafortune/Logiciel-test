@@ -2216,7 +2216,7 @@ app.layout = dbc.Container([
             dbc.Row([
                 dbc.Col([
                     html.Div([
-                        html.P("LFT PROPERTY ANALYSIS", 
+                        html.P("ANALYSIS", 
                                className="text-center mb-0 fw-bold fs-3 lft-title")
                     ], className="main-header-content",
                     style={"position": "absolute", "bottom": "20px", "left": "0", "right": "0", "width": "100%", "z-index": "2", "text-align": "center"})
