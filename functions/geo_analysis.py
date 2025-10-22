@@ -235,7 +235,7 @@ def get_revenue_menage_by_province(year_range):
     query = f"""
     SELECT p.province_name, i.annee, i.nombre, r.revenue_du_menage as dimension_value
     FROM "revenue_menage"."canada_provinces_revenue_menage" i
-    JOIN "{SCHEMA_MAPPING}"."Canada_Provinces_ID" p ON i.province_id = p.province_id
+    JOIN "{SCHEMA_MAPPING}"."Canada_Provinces_ID" p ON i.province_id::text = p.province_id::text
     LEFT JOIN "{SCHEMA_MAPPING}"."revenue_menage" r ON i.revenue_menage_id = r.id
     WHERE i.annee BETWEEN {year_range[0]} AND {year_range[1]}
     ORDER BY p.province_name, i.annee
@@ -255,7 +255,7 @@ def get_revenue_menage_by_region(year_range):
     FROM 
         "revenue_menage"."province_quebec_regions_revenue_menage" i
     JOIN 
-        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_ID" r ON i.region_id = r.region_id
+        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_ID" r ON i.region_id::text = r.region_id::text
     LEFT JOIN 
         "{SCHEMA_MAPPING}"."revenue_menage" rm ON i.revenue_menage_id = rm.id
     WHERE 
@@ -279,7 +279,7 @@ def get_revenue_menage_by_sector(year_range):
     FROM 
         "revenue_menage"."province_quebec_secteurs_revenue_menage" i
     JOIN 
-        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_Secteurs_ID" s ON i.secteur_id = s.secteur_id
+        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_Secteurs_ID" s ON i.secteur_id::text = s.secteur_id::text
     LEFT JOIN 
         "{SCHEMA_MAPPING}"."revenue_menage" rm ON i.revenue_menage_id = rm.id
     WHERE 
@@ -304,7 +304,7 @@ def get_revenue_menage_by_quartier(year_range):
     FROM 
         "revenue_menage"."province_quebec_quartiers_revenue_menage" i
     JOIN 
-        "{SCHEMA_MAPPING}"."Province_Quebec_Quartiers_ID" q ON i.quartier_id = q.quartier_id
+        "{SCHEMA_MAPPING}"."Province_Quebec_Quartiers_ID" q ON i.quartier_id::text = q.quartier_id::text
     LEFT JOIN 
         "{SCHEMA_MAPPING}"."revenue_menage" r ON i.revenue_menage_id = r.id
     WHERE 
@@ -347,7 +347,7 @@ def get_age_population_by_province(year_range):
     query = f"""
     SELECT p.province_name, i.annee, i.nombre, a.age_population as dimension_value
     FROM "age_population"."canada_provinces_age_population" i
-    JOIN "{SCHEMA_MAPPING}"."Canada_Provinces_ID" p ON i.province_id = p.province_id
+    JOIN "{SCHEMA_MAPPING}"."Canada_Provinces_ID" p ON i.province_id::text = p.province_id::text
     LEFT JOIN "{SCHEMA_MAPPING}"."age_population" a ON i.age_population_id = a.id
     WHERE i.annee BETWEEN {year_range[0]} AND {year_range[1]}
     ORDER BY p.province_name, i.annee
@@ -366,7 +366,7 @@ def get_age_population_by_region(year_range):
     FROM 
         "age_population"."province_quebec_regions_age_population" i
     JOIN 
-        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_ID" r ON i.region_id = r.region_id
+        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_ID" r ON i.region_id::text = r.region_id::text
     LEFT JOIN 
         "{SCHEMA_MAPPING}"."age_population" a ON i.age_population_id = a.id
     WHERE 
@@ -389,7 +389,7 @@ def get_age_population_by_sector(year_range):
     FROM 
         "age_population"."province_quebec_secteurs_age_population" i
     JOIN 
-        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_Secteurs_ID" s ON i.secteur_id = s.secteur_id
+        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_Secteurs_ID" s ON i.secteur_id::text = s.secteur_id::text
     LEFT JOIN 
         "{SCHEMA_MAPPING}"."age_population" a ON i.age_population_id = a.id
     WHERE 
@@ -413,7 +413,7 @@ def get_age_population_by_quartier(year_range):
     FROM 
         "age_population"."province_quebec_quartiers_age_population" i
     JOIN 
-        "{SCHEMA_MAPPING}"."Province_Quebec_Quartiers_ID" q ON i.quartier_id = q.quartier_id
+        "{SCHEMA_MAPPING}"."Province_Quebec_Quartiers_ID" q ON i.quartier_id::text = q.quartier_id::text
     LEFT JOIN 
         "{SCHEMA_MAPPING}"."age_population" a ON i.age_population_id = a.id
     WHERE 
@@ -455,7 +455,7 @@ def get_etat_logement_by_province(year_range, dimension_id):
     query = f"""
     SELECT p.province_name, i.annee, i.nombre, e.etat_logement as dimension_value
     FROM "etat_logement"."canada_provinces_etat_logement" i
-    JOIN "{SCHEMA_MAPPING}"."Canada_Provinces_ID" p ON i.province_id = p.province_id
+    JOIN "{SCHEMA_MAPPING}"."Canada_Provinces_ID" p ON i.province_id::text = p.province_id::text
     LEFT JOIN "{SCHEMA_MAPPING}"."etat_logement" e ON i.etat_logement_id = e.id
     WHERE i.annee BETWEEN {year_range[0]} AND {year_range[1]}
     ORDER BY p.province_name, i.annee
@@ -474,7 +474,7 @@ def get_etat_logement_by_region(year_range, dimension_id):
     FROM 
         "etat_logement"."province_quebec_regions_etat_logement" i
     JOIN 
-        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_ID" r ON i.region_id = r.region_id
+        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_ID" r ON i.region_id::text = r.region_id::text
     LEFT JOIN 
         "{SCHEMA_MAPPING}"."etat_logement" e ON i.etat_logement_id = e.id
     WHERE 
@@ -497,7 +497,7 @@ def get_etat_logement_by_sector(year_range, dimension_id):
     FROM 
         "etat_logement"."province_quebec_secteurs_etat_logement" i
     JOIN 
-        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_Secteurs_ID" s ON i.secteur_id = s.secteur_id
+        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_Secteurs_ID" s ON i.secteur_id::text = s.secteur_id::text
     LEFT JOIN 
         "{SCHEMA_MAPPING}"."etat_logement" e ON i.etat_logement_id = e.id
     WHERE 
@@ -521,7 +521,7 @@ def get_etat_logement_by_quartier(year_range, dimension_id):
     FROM 
         "etat_logement"."province_quebec_quartiers_etat_logement" i
     JOIN 
-        "{SCHEMA_MAPPING}"."Province_Quebec_Quartiers_ID" q ON i.quartier_id = q.quartier_id
+        "{SCHEMA_MAPPING}"."Province_Quebec_Quartiers_ID" q ON i.quartier_id::text = q.quartier_id::text
     LEFT JOIN 
         "{SCHEMA_MAPPING}"."etat_logement" e ON i.etat_logement_id = e.id
     WHERE 
@@ -651,7 +651,7 @@ def get_loyer_moyen_by_region(schema_name, dimension_id, year_range):
     FROM 
         "{schema_name}"."{table_name}" l
     JOIN 
-        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_ID" r ON l.region_id = r.region_id
+        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_ID" r ON l.region_id::text = r.region_id::text
     WHERE 
         l.annee BETWEEN {year_range[0]} AND {year_range[1]}
     ORDER BY 
@@ -671,7 +671,7 @@ def get_loyer_moyen_by_sector(schema_name, dimension_id, year_range):
     FROM 
         "{schema_name}"."{table_name}" l
     JOIN 
-        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_Secteurs_ID" s ON l.secteur_id = s.secteur_id
+        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_Secteurs_ID" s ON l.secteur_id::text = s.secteur_id::text
     WHERE 
         l.annee BETWEEN {year_range[0]} AND {year_range[1]}
     ORDER BY 
@@ -691,7 +691,7 @@ def get_loyer_moyen_by_quartier(schema_name, dimension_id, year_range):
     FROM 
         "{schema_name}"."{table_name}" l
     JOIN 
-        "{SCHEMA_MAPPING}"."Province_Quebec_Quartiers_ID" q ON l.quartier_id = q.quartier_id
+        "{SCHEMA_MAPPING}"."Province_Quebec_Quartiers_ID" q ON l.quartier_id::text = q.quartier_id::text
     WHERE 
         l.annee BETWEEN {year_range[0]} AND {year_range[1]}
     ORDER BY 
@@ -857,7 +857,7 @@ def get_inoccupation_rates_by_region(schema_name, dimension_id, year_range):
     FROM 
         "{schema_name}"."{table_name}" i
     JOIN 
-        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_ID" r ON i.region_id = r.region_id
+        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_ID" r ON i.region_id::text = r.region_id::text
     WHERE 
         i.annee BETWEEN {year_range[0]} AND {year_range[1]}
     ORDER BY 
@@ -877,7 +877,7 @@ def get_inoccupation_rates_by_sector(schema_name, dimension_id, year_range):
     FROM 
         "{schema_name}"."{table_name}" i
     JOIN 
-        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_Secteurs_ID" s ON i.secteur_id = s.secteur_id
+        "{SCHEMA_MAPPING}"."Province_Quebec_Regions_Secteurs_ID" s ON i.secteur_id::text = s.secteur_id::text
     WHERE 
         i.annee BETWEEN {year_range[0]} AND {year_range[1]}
     ORDER BY 
@@ -897,7 +897,7 @@ def get_inoccupation_rates_by_quartier(schema_name, dimension_id, year_range):
     FROM 
         "{schema_name}"."{table_name}" i
     JOIN 
-        "{SCHEMA_MAPPING}"."Province_Quebec_Quartiers_ID" q ON i.quartier_id = q.quartier_id
+        "{SCHEMA_MAPPING}"."Province_Quebec_Quartiers_ID" q ON i.quartier_id::text = q.quartier_id::text
     WHERE 
         i.annee BETWEEN {year_range[0]} AND {year_range[1]}
     ORDER BY 
