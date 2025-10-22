@@ -28,24 +28,36 @@ logger = logging.getLogger(__name__)
 # SECTION 1: CONFIGURATION ET CONNEXION À LA BASE DE DONNÉES
 # ============================================================================
 
-# Configuration de la base de données
-DB_CONFIG = {
-    "dbname": "analysis",
-    "user": "postgres",
-    "password": "4845",
-    "host": "100.73.238.42"
-}
-
 # Variables globales
 DEBUG_SQL = False  # Désactivé pour la production
 SCHEMA_MAPPING = "id"
+
+def get_db_config():
+    """Obtient la configuration de connexion dynamique selon l'environnement"""
+    from filter.data_loading import get_db_connection_string
+    import urllib.parse
+    
+    # Obtenir l'URL de connexion
+    db_url = get_db_connection_string('analysis')
+    
+    # Parser l'URL postgresql://user:password@host:port/database
+    parsed = urllib.parse.urlparse(db_url)
+    
+    return {
+        "dbname": parsed.path[1:],  # Enlever le / au début
+        "user": parsed.username,
+        "password": parsed.password,
+        "host": parsed.hostname,
+        "port": parsed.port or 5432
+    }
 
 @contextmanager
 def get_connection_context():
     """
     Gestionnaire de contexte pour la connexion à la base de données PostgreSQL
     """
-    conn = psycopg2.connect(**DB_CONFIG)
+    db_config = get_db_config()
+    conn = psycopg2.connect(**db_config)
     try:
         yield conn
     finally:
