@@ -1,0 +1,40 @@
+# Framework Dash et composants
+dash==3.2.0
+dash-bootstrap-components==2.0.4
+dash-table==5.0.0
+
+# Dépendances de Dash
+plotly>=5.0.0
+Flask>=3.0.0
+Werkzeug<3.2
+
+# Panel et ses extensions
+panel>=1.4.0
+param>=2.0.0
+bokeh>=3.4.0
+jupyter_bokeh>=3.0.0
+
+# Base de données
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.0
+
+# Manipulation de données
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Géospatial
+shapely>=2.0.0
+geopandas>=0.14.0
+
+# Utilitaires
+python-dateutil>=2.8.0
+openpyxl>=3.1.0
+beautifulsoup4==4.12.2
+
+# Autres dépendances nécessaires
+requests
+retrying
+typing-extensions>=4.1.1
+importlib-metadata
+nest-asyncio
+setuptools
