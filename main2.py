@@ -10229,11 +10229,19 @@ if __name__ == "__main__":
     
     # Configuration pour la production/développement
     port = int(os.environ.get('PORT', 8050))
-    debug = os.environ.get('FLASK_ENV', 'development') == 'development'
+    
+    # Detecter Railway automatiquement
+    is_railway = os.environ.get('RAILWAY_ENVIRONMENT') is not None
+    is_production = os.environ.get('FLASK_ENV') == 'production'
+    
+    # Mode debug OFF si on est sur Railway OU en production
+    debug = not (is_railway or is_production)
     
     print("🚀 Démarrage de l'application Dash...")
     print(f"📊 Application disponible sur le port: {port}")
     print(f"🔧 Mode: {'DÉVELOPPEMENT' if debug else 'PRODUCTION'}")
+    if is_railway:
+        print(f"🚂 Environnement: RAILWAY")
     print("✅ [FIX] Layout nettoyé - doublons supprimés")
     print("✅ [FIX] Callback SCHL rate control activé")
     print("👁️ Recherchez le message '🔧🔧🔧 [SCHL Rate Control CALLBACK DÉCLENCHÉ]' après avoir sélectionné un immeuble")
