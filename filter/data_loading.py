@@ -14,7 +14,7 @@ def get_db_connection_string(database_name):
     """
     Retourne la chaîne de connexion à la base de données selon l'environnement.
     
-    En production (Railway): Utilise DATABASE_URL_<nom>
+    En production (Railway): Utilise DATABASE_URL
     En développement (local): Utilise Tailscale (100.73.238.42)
     
     Args:
@@ -23,23 +23,25 @@ def get_db_connection_string(database_name):
     Returns:
         str: Chaîne de connexion PostgreSQL
     """
-    # Vérifier si on est en production (Railway définit RAILWAY_ENVIRONMENT)
-    is_production = os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('FLASK_ENV') == 'production'
+    # Détecter Railway ou production
+    is_railway = os.environ.get('RAILWAY_ENVIRONMENT') is not None
+    is_production = os.environ.get('FLASK_ENV') == 'production'
+    has_database_url = os.environ.get('DATABASE_URL') is not None
     
-    if is_production:
-        # En production, chercher une variable d'environnement spécifique
-        env_var_name = f"DATABASE_URL_{database_name.upper()}"
-        db_url = os.environ.get(env_var_name)
+    # Si Railway OU production OU DATABASE_URL existe, utiliser Railway
+    if is_railway or is_production or has_database_url:
+        # Utiliser DATABASE_URL pour toutes les bases (Railway héberge tout dans une seule DB)
+        db_url = os.environ.get('DATABASE_URL')
         
-        # Fallback: si une seule DATABASE_URL est définie, l'utiliser pour toutes
         if not db_url:
-            db_url = os.environ.get('DATABASE_URL')
+            # URL Railway en dur si DATABASE_URL n'est pas définie
+            db_url = "postgresql://postgres:xJEaLcUQRAxBLRpKggzRqStrsuDbRjnX@turntable.proxy.rlwy.net:11722/railway"
         
-        if db_url:
-            # Correction pour certains providers (postgres:// -> postgresql://)
-            if db_url.startswith('postgres://'):
-                db_url = db_url.replace('postgres://', 'postgresql://', 1)
-            return db_url
+        # Correction pour certains providers (postgres:// -> postgresql://)
+        if db_url.startswith('postgres://'):
+            db_url = db_url.replace('postgres://', 'postgresql://', 1)
+        
+        return db_url
     
     # Configuration locale par défaut (Tailscale)
     return f"postgresql://postgres:4845@100.73.238.42:5432/{database_name}"
